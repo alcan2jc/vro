@@ -9,9 +9,7 @@ import reactor.core.publisher.Mono;
 
 @Service
 public class TellerService {
-
     private static final Logger logger = LoggerFactory.getLogger(TellerService.class);
-
     private final WebclientConfig webClientConfig;
 
     public TellerService(WebclientConfig webClientConfig) {
