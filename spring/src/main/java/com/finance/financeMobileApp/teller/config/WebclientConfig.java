@@ -10,25 +10,34 @@ import javax.net.ssl.KeyManagerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import io.netty.handler.ssl.SslContextBuilder;
+import jakarta.annotation.PostConstruct;
 import reactor.netty.http.client.HttpClient;
 
 @Configuration
+@PropertySource("classpath:application.properties")
 public class WebclientConfig {
-    
+
     @Value("${server.ssl.key-store-password}")
     private String keystorePassword;
 
     @Value("${server.ssl.key-store}")
     private String keystorePath;
 
+    @PostConstruct
+    public void init() {
+        System.out.println("Key Store: " + keystorePath);
+    }
+
     @Bean
     public WebClient webClient() throws Exception {
         // Load the keystore containing the client certificate
-        KeyStore keyStore = KeyStore.getInstance("PKCS12");
+        KeyStore keyStore = KeyStore.getInstance("JKS");
         try (FileInputStream inputStream = new FileInputStream(keystorePath)) {
             keyStore.load(inputStream, keystorePassword.toCharArray());
         }
@@ -57,5 +66,10 @@ public class WebclientConfig {
                         .clientConnector(new ReactorClientHttpConnector(HttpClient.create().secure(ssl -> ssl.sslContext(nettySslContext))))
                         .baseUrl("https://api.teller.io") // Base URL for Teller API
                         .build();
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 }

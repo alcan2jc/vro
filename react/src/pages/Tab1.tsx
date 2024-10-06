@@ -2,8 +2,13 @@ import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/rea
 import ExploreContainer from '../components/ExploreContainer';
 import './Tab1.css';
 
+import React from 'react';
+import useTeller from '../services/tellerHook';
+
 const Tab1: React.FC = () => {
-  return (
+    const { open, ready } = useTeller();
+
+    return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
@@ -17,6 +22,13 @@ const Tab1: React.FC = () => {
           </IonToolbar>
         </IonHeader>
         <ExploreContainer name="Tab 1 page" />
+
+        <div>
+            <button onClick={open} disabled={!ready}>
+                Connect Your Bank
+            </button>
+        </div>
+        
       </IonContent>
     </IonPage>
   );
